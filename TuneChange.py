@@ -132,6 +132,7 @@ def alltoC(tuneerin):
 def ctoall(tuneerout):
 	if tuneerout != "c":
 		changekey2 = dictoany(tuneerout)
+		listout1 = alltoC(tuneerin)
 		for i in listout1:
 			listout2.append(changekey2[i])
 	return listout2
