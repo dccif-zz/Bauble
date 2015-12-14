@@ -127,7 +127,6 @@ def alltoC(tuneerin):
 	#print(listout1)
 	return listout1
 
-alltoC(tuneerin)
 # print(listout1)
 
 def ctoall(tuneerout):
@@ -154,7 +153,7 @@ def checkout(tuneerin,tuneerout):
 		print("->")
 		print("c",listout1)	
 	else:
-		ctoall(tuneerout)
+		listout2 = ctoall(tuneerout)
 		print(tuneerin,listin1)
 		print("->")
 		print(tuneerout,listout2)
