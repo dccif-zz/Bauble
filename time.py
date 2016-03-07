@@ -11,12 +11,12 @@
 	
 def time():
 	while True:															#进行判断
-		timein = input("请输入正整数")	
+		timein = input()	
 		if(round(float(timein)) >= 0 and "." not in timein):			#如果满足条件则跳出循环
 			timeout = str(timein)										#转换输出
 			minutes = int(timein) // 60									#取分
 			second = int(timein) % 60									#取秒
-			break
+			break														#跳出循环
 		print("请输入正整数")											#提示用户
 	print(str(timeout)+"秒等价于"+str(minutes)+"分"+str(second)+"秒")	#最后输出
 	
