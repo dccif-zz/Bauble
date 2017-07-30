@@ -1,7 +1,5 @@
 ﻿# Bauble
 
----
-
 ## Python
 
 + [一时兴起的`C调`简谱到其余调的转换程序](https://github.com/dccif/Bauble/blob/master/TuneChangeSimply.py)
