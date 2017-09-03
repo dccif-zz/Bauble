@@ -2,9 +2,12 @@
 
 ## Python
 
-+ [一时兴起的`C调`简谱到其余调的转换程序](https://github.com/dccif/Bauble/blob/master/TuneChangeSimply.py)
-+ [归并排序](https://github.com/dccif/Bauble/blob/master/mergeSort.py)
-+ [利用生成的随机数测试归并排序](https://github.com/dccif/Bauble/blob/master/randomN.py)
++ [一时兴起的`C调`简谱到其余调的转换程序](https://github.com/dccif/Bauble/blob/master/TuneChange/TuneChangeSimply.py)
+
+  + [自制带GUI的简谱转换程序](https://github.com/dccif/TuneChange/releases)
+
++ [排序](https://github.com/dccif/Bauble/blob/master/Sort)
+  + [利用生成的随机数测试归并排序](https://github.com/dccif/Bauble/blob/master/Sort/randomN.py)
 
 ## 《汇编语言（第三版）》部分练习
 
@@ -14,6 +17,6 @@
 
 + [客户端和服务端的TCP/UDP的通讯](https://github.com/dccif/Bauble/tree/master/Socket)
 
-## Common Lisp学习
+## [Common Lisp学习](https://github.com/dccif/Bauble/tree/master/CommonLisp)
 
 + > 参考 *land of lisp*
