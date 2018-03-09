@@ -196,7 +196,7 @@ class Lesson(object):
             timeEnd = (datetime.datetime.combine(datetime.date(1, 1, 1), timeStart) + twoclasstimedelta).time()
             timeList.append(timeEnd)
         elif Lessontime == '10,11,12':
-            timeStart = time(hour=18, minute=00, second=0)
+            timeStart = time(hour=18, minute=0, second=0)
             timeList.append(timeStart)
             timeEnd = (datetime.datetime.combine(datetime.date(1, 1, 1), timeStart) + threeclasstimedelta).time()
             timeList.append(timeEnd)
@@ -216,7 +216,7 @@ class Lesson(object):
             oneRow.append(timeList[0].strftime("%X"))
             oneRow.append(dayList[count].strftime('%Y/%m/%d'))
             oneRow.append(timeList[1].strftime("%X"))
-            oneRow.append("False\",\"False")
+            oneRow.append("False\",\"True")
             oneRow.append(dayList[count].strftime('%Y/%m/%d'))
             oneRow.append(
                 (datetime.datetime.combine(datetime.date(1, 1, 1), timeList[0]) - self.adv_time).time().strftime("%X"))
