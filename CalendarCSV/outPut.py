@@ -1,10 +1,9 @@
-import bs4
-import re
 import datetime
+import re
+from datetime import time
+
 from bs4 import BeautifulSoup
 from bs4 import SoupStrainer
-from datetime import time
-from datetime import timedelta
 
 
 # 从文件读取课表
@@ -58,13 +57,14 @@ def removeLine(tdListEle):
 # 计算课程时间
 def getSpan(List):
     out = []
-    alltime = List[1].split('{')
-    classtime = alltime[0]
-    classspan = classtime[3:][:-1]
-    spanweek = alltime[1]
-    out.append(classtime[1])
-    out.append(classspan)
-    out.append(countWeek(spanweek))
+    if List.__len__() >= 3:
+        alltime = List[1].split('{')
+        classtime = alltime[0]
+        classspan = classtime[3:][:-1]
+        spanweek = alltime[1]
+        out.append(classtime[1])
+        out.append(classspan)
+        out.append(countWeek(spanweek))
     return out
 
 
@@ -83,7 +83,7 @@ def wraplesson(lesslist):
     lessontime = getSpan(onelesson)
     lessonListLength = onelesson.__len__()
     # 标准课程
-    if lessonListLength == 4:
+    if lessonListLength > 3:
         return Lesson(onelesson[0], lessontime[0], lessontime[1], lessontime[2], onelesson[2], onelesson[3])
     # 实验课程
     if lessonListLength == 3:
@@ -96,118 +96,8 @@ def writefile(filename, instr):
         outFile.write(instr)
 
 
-# 处理开始日期
-def startPro(Lesson):
-    startday = Lesson.weekday
-    if startday == "一":
-        # delta = datetime.timedelta(days=1)
-        startday = Lesson.term_begin
-    elif startday == "二":
-        delta = datetime.timedelta(days=1)
-        startday = Lesson.term_begin + delta
-    elif startday == "三":
-        delta = datetime.timedelta(days=2)
-        startday = Lesson.term_begin + delta
-    elif startday == "四":
-        delta = datetime.timedelta(days=3)
-        startday = Lesson.term_begin + delta
-    elif startday == "五":
-        delta = datetime.timedelta(days=4)
-        startday = Lesson.term_begin + delta
-    return startday
-
-
-# 生成日期持续列表
-def dayStrList(Lesson):
-    outList = []
-    startday = startPro(Lesson)
-    delta = datetime.timedelta(days=7)
-    # print(Lesson.term_begin.strftime('%Y/%m/%d'))
-    outList.append(startday)
-    for count in range(1, Lesson.count):
-        startday = startday + delta
-        outList.append(startday)
-    print(outList)
-    return outList
-
-
-# 生成时间持续列表
-def timeStrList(Lesson):
-    timeList = []
-    twoclasstimedelta = datetime.timedelta(minutes=45 * 2 + 5)
-    threeclasstimedelta = datetime.timedelta(minutes=45 * 3 + 2 * 5)
-    Lessontime = Lesson.span
-    if Lessontime == '1,2':
-        timeStart = time(hour=8, minute=0, second=0)
-        timeList.append(timeStart)
-        timeEnd = (datetime.datetime.combine(datetime.date(1, 1, 1), timeStart) + twoclasstimedelta).time()
-        timeList.append(timeEnd)
-    elif Lessontime == '3,4':
-        timeStart = time(hour=9, minute=55, second=0)
-        timeList.append(timeStart)
-        timeEnd = (datetime.datetime.combine(datetime.date(1, 1, 1), timeStart) + twoclasstimedelta).time()
-        timeList.append(timeEnd)
-    elif Lessontime == '3,4,5':
-        timeStart = time(hour=9, minute=55, second=0)
-        timeList.append(timeStart)
-        timeEnd = (datetime.datetime.combine(datetime.date(1, 1, 1), timeStart) + threeclasstimedelta).time()
-        timeList.append(timeEnd)
-    elif Lessontime == '6,7':
-        timeStart = time(hour=13, minute=15, second=0)
-        timeList.append(timeStart)
-        timeEnd = (datetime.datetime.combine(datetime.date(1, 1, 1), timeStart) + twoclasstimedelta).time()
-        timeList.append(timeEnd)
-    elif Lessontime == '8,9':
-        timeStart = time(hour=14, minute=55, second=0)
-        timeList.append(timeStart)
-        timeEnd = (datetime.datetime.combine(datetime.date(1, 1, 1), timeStart) + twoclasstimedelta).time()
-        timeList.append(timeEnd)
-    elif Lessontime == '10,11,12':
-        timeStart = time(hour=18, minute=00, second=0)
-        timeList.append(timeStart)
-        timeEnd = (datetime.datetime.combine(datetime.date(1, 1, 1), timeStart) + threeclasstimedelta).time()
-        timeList.append(timeEnd)
-    # print(timeList)
-    return timeList
-
-
-# 处理课程
-def classStr(Lesson):
-    outList = []
-    dayList = dayStrList(Lesson)
-    timeList = timeStrList(Lesson)
-    for count in range(Lesson.count):
-        oneRow = []
-        oneRow.append(Lesson.name)
-        oneRow.append(dayList[count].strftime('%Y/%m/%d'))
-        oneRow.append(timeList[0].strftime("%X"))
-        oneRow.append(dayList[count].strftime('%Y/%m/%d'))
-        oneRow.append(timeList[1].strftime("%X"))
-        oneRow.append("False")
-        oneRow.append("False")
-        oneRow.append(dayList[count].strftime('%Y/%m/%d'))
-        oneRow.append(timeList[0].strftime("%X"))
-        oneRow.append("")
-        oneRow.append("")
-        oneRow.append("")
-        oneRow.append("")
-        oneRow.append(Lesson.loc)
-        oneRow.append("")
-        oneRow.append("")
-        oneRow.append("")
-        oneRow.append("2")
-        oneRow.append("普通")
-        oneRow.append("")
-        oneRow.append("False")
-        oneRow.append("中")
-        oneRow = "\"" + "\",\"".join(oneRow) + "\"\n"
-        outList.append(oneRow)
-    print(outList)
-    return outList
-
-
 # 字符拼接
-def str_join(LessonList):
+def str_join(LessonList, addExp="Y"):
     title_start = r'"主题","开始日期**","开始时间","结束日期","结束时间","全天事件","提醒开/关","提醒日期","提醒时间","会议组织者","必需的与会者","可选的与会者","会议资源",' \
                   r'"地点**","记帐信息","类别","里程","忙闲状态","敏感度","说明","私有","优先级" '
     newLine = '\n'
@@ -215,15 +105,19 @@ def str_join(LessonList):
     strlesson = ""
     for lesson in LessonList:
         if lesson != None:
-            strlesson = strlesson + "".join(classStr(lesson))
+            strlesson = strlesson + "".join(lesson.classStr())
         else:
             continue
-        # onelesson = "".join(classStr(lesson))
-
-    print(strlesson)
-    onelesson = "".join(classStr(LessonList[2]))
-    print(onelesson)
-    # print(LessonStr)
+    if addExp.upper() == "Y":
+        return LessonStr + strlesson
+    else:
+        strNoExp = ""
+        strlesson = strlesson.splitlines()
+        for line in strlesson:
+            if "实验" in line:
+                continue
+            strNoExp = strNoExp + line + "\n"
+        return LessonStr + strNoExp
 
 
 class Lesson(object):
@@ -237,17 +131,110 @@ class Lesson(object):
         self.teacher = teacher
         self.loc = loc
 
+    # 处理开始日期
+    def __startPro(self):
+        startday = self.weekday
+        if startday == "一":
+            # delta = datetime.timedelta(days=1)
+            startday = self.term_begin
+        elif startday == "二":
+            delta = datetime.timedelta(days=1)
+            startday = self.term_begin + delta
+        elif startday == "三":
+            delta = datetime.timedelta(days=2)
+            startday = self.term_begin + delta
+        elif startday == "四":
+            delta = datetime.timedelta(days=3)
+            startday = self.term_begin + delta
+        elif startday == "五":
+            delta = datetime.timedelta(days=4)
+            startday = self.term_begin + delta
+        return startday
+
+    def __dayStrList(self):
+        outList = []
+        startday = self.__startPro()
+        delta = datetime.timedelta(days=7)
+        # print(self.term_begin.strftime('%Y/%m/%d'))
+        outList.append(startday)
+        for count in range(1, self.count):
+            startday = startday + delta
+            outList.append(startday)
+        # print(outList)
+        return outList
+
+    # 处理课程时间间隔
+    def __timeStrList(self):
+        timeList = []
+        twoclasstimedelta = datetime.timedelta(minutes=45 * 2 + 5)
+        threeclasstimedelta = datetime.timedelta(minutes=45 * 3 + 2 * 5)
+        Lessontime = self.span
+        if Lessontime == '1,2':
+            timeStart = time(hour=8, minute=0, second=0)
+            timeList.append(timeStart)
+            timeEnd = (datetime.datetime.combine(datetime.date(1, 1, 1), timeStart) + twoclasstimedelta).time()
+            timeList.append(timeEnd)
+        elif Lessontime == '3,4':
+            timeStart = time(hour=9, minute=55, second=0)
+            timeList.append(timeStart)
+            timeEnd = (datetime.datetime.combine(datetime.date(1, 1, 1), timeStart) + twoclasstimedelta).time()
+            timeList.append(timeEnd)
+        elif Lessontime == '3,4,5':
+            timeStart = time(hour=9, minute=55, second=0)
+            timeList.append(timeStart)
+            timeEnd = (datetime.datetime.combine(datetime.date(1, 1, 1), timeStart) + threeclasstimedelta).time()
+            timeList.append(timeEnd)
+        elif Lessontime == '6,7':
+            timeStart = time(hour=13, minute=15, second=0)
+            timeList.append(timeStart)
+            timeEnd = (datetime.datetime.combine(datetime.date(1, 1, 1), timeStart) + twoclasstimedelta).time()
+            timeList.append(timeEnd)
+        elif Lessontime == '8,9':
+            timeStart = time(hour=15, minute=5, second=0)
+            timeList.append(timeStart)
+            timeEnd = (datetime.datetime.combine(datetime.date(1, 1, 1), timeStart) + twoclasstimedelta).time()
+            timeList.append(timeEnd)
+        elif Lessontime == '10,11,12':
+            timeStart = time(hour=18, minute=00, second=0)
+            timeList.append(timeStart)
+            timeEnd = (datetime.datetime.combine(datetime.date(1, 1, 1), timeStart) + threeclasstimedelta).time()
+            timeList.append(timeEnd)
+        # print(timeList)
+        return timeList
+
+    # 处理课程
+    def classStr(self):
+        outList = []
+        dayList = self.__dayStrList()
+        timeList = self.__timeStrList()
+        emptSign = re.compile(r'"x"')
+        for count in range(self.count):
+            oneRow = []
+            oneRow.append(self.name)
+            oneRow.append(dayList[count].strftime('%Y/%m/%d'))
+            oneRow.append(timeList[0].strftime("%X"))
+            oneRow.append(dayList[count].strftime('%Y/%m/%d'))
+            oneRow.append(timeList[1].strftime("%X"))
+            oneRow.append("False\",\"False")
+            oneRow.append(dayList[count].strftime('%Y/%m/%d'))
+            oneRow.append(timeList[0].strftime("%X"))
+            oneRow.append(r'x","x","x","x')
+            oneRow.append(self.loc)
+            oneRow.append(r'x","x","x')
+            oneRow.append("2\",\"普通")
+            oneRow.append("")
+            oneRow.append("False\",\"中")
+            oneRow = "\"" + "\",\"".join(oneRow) + "\"\n"
+            oneRow = re.sub(emptSign, "", oneRow)
+            outList.append(oneRow)
+        # print(outList)
+        return outList
+
 
 if __name__ == "__main__":
     allClass = readLessonTable("downCalendar.html")
 
-    # onelesson = removeLine(allClass[2])
-    # lessontime = getSpan(onelesson)
-    # print(onelesson)
-    # print(lessontime)
-    # 处理范围
-    allLesson = LessObjList(allClass[3:allClass.__len__() - 1])
-    print(allLesson)
-    print(allLesson[1].term_begin)
-
-    str_join(allLesson)
+    allLesson = LessObjList(allClass[1:allClass.__len__() - 1])
+    str_join(allLesson, "n")
+    # b = allLesson[9].classStr()
+    # writefile("out.csv", str_join(allLesson))
