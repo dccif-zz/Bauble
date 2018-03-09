@@ -97,7 +97,7 @@ def writefile(filename, instr):
 
 
 # 字符拼接
-def str_join(LessonList, addExp="Y"):
+def str_join(LessonList, addExp="N"):
     title_start = r'"主题","开始日期**","开始时间","结束日期","结束时间","全天事件","提醒开/关","提醒日期","提醒时间","会议组织者","必需的与会者","可选的与会者","会议资源",' \
                   r'"地点**","记帐信息","类别","里程","忙闲状态","敏感度","说明","私有","优先级" '
     newLine = '\n'
@@ -122,6 +122,7 @@ def str_join(LessonList, addExp="Y"):
 
 class Lesson(object):
     term_begin = datetime.date(2018, 3, 5)
+    adv_time = datetime.timedelta(minutes=15)
 
     def __init__(self, name, weekday, span, count, teacher, loc):
         self.name = name
@@ -217,7 +218,8 @@ class Lesson(object):
             oneRow.append(timeList[1].strftime("%X"))
             oneRow.append("False\",\"False")
             oneRow.append(dayList[count].strftime('%Y/%m/%d'))
-            oneRow.append(timeList[0].strftime("%X"))
+            oneRow.append(
+                (datetime.datetime.combine(datetime.date(1, 1, 1), timeList[0]) - self.adv_time).time().strftime("%X"))
             oneRow.append(r'x","x","x","x')
             oneRow.append(self.loc)
             oneRow.append(r'x","x","x')
@@ -227,14 +229,21 @@ class Lesson(object):
             oneRow = "\"" + "\",\"".join(oneRow) + "\"\n"
             oneRow = re.sub(emptSign, "", oneRow)
             outList.append(oneRow)
-        # print(outList)
         return outList
 
 
 if __name__ == "__main__":
-    allClass = readLessonTable("downCalendar.html")
+    infile = input("请输入html文件:")
+    allClass = readLessonTable(infile)
 
     allLesson = LessObjList(allClass[1:allClass.__len__() - 1])
-    str_join(allLesson, "n")
-    # b = allLesson[9].classStr()
-    # writefile("out.csv", str_join(allLesson))
+    ynExp = input("是否添加实验课,默认为N(Y/N):").strip()
+    advTime = input("请输入提前提醒的时间,默认为15分钟:(单位分钟):").strip()
+    if advTime != '':
+        Lesson.adv_time = datetime.timedelta(minutes=int(advTime))
+    if ynExp != '':
+        out_str = str_join(allLesson, ynExp.strip())
+    out_str = str_join(allLesson)
+
+    writefile("out.csv", out_str)
+    print("生成完毕，(^-^)")
