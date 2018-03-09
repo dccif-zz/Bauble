@@ -1,3 +1,6 @@
+import time
+
+
 def quicksort(array):
     if len(array) < 2:
         return array
@@ -8,4 +11,7 @@ def quicksort(array):
         return quicksort(less) + [pivot] + quicksort(greater)
 
 
-print(quicksort([10, 5, 2, 3]))
+start = time.clock()
+print(quicksort([2, 8, 7, 1, 3, 5, 6, 4, 9, 10]))
+ends = time.clock()
+print(str(ends - start))
