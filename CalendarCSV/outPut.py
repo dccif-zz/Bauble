@@ -208,7 +208,8 @@ class Lesson(object):
         outList = []
         dayList = self.__dayStrList()
         timeList = self.__timeStrList()
-        emptSign = re.compile(r'"x"')
+        replaceChr = '\ufffd'
+        emptSign = re.compile(replaceChr)
         for count in range(self.count):
             oneRow = []
             oneRow.append(self.name)
@@ -220,9 +221,13 @@ class Lesson(object):
             oneRow.append(dayList[count].strftime('%Y/%m/%d'))
             oneRow.append(
                 (datetime.datetime.combine(datetime.date(1, 1, 1), timeList[0]) - self.adv_time).time().strftime("%X"))
-            oneRow.append(r'x","x","x","x')
+            # oneRow.append(r'x","x","x","x')
+            oneRow.append(
+                Lesson.email + replaceChr + "\",\"" + replaceChr + "\",\"" + replaceChr + "\",\"" + replaceChr)
+            # oneRow.append(Lesson.email + r'"x","x","x')
             oneRow.append(self.loc)
-            oneRow.append(r'x","x","x')
+            # oneRow.append(r'x","x","x')
+            oneRow.append(replaceChr + "\",\"" + replaceChr + "\",\"" + replaceChr)
             oneRow.append("2\",\"普通")
             oneRow.append("")
             oneRow.append("False\",\"中")
@@ -235,8 +240,10 @@ class Lesson(object):
 if __name__ == "__main__":
     infile = input("请输入html文件:")
     allClass = readLessonTable(infile)
+    Lesson.email = input("请输入要同步的邮箱账号:")
 
     allLesson = LessObjList(allClass[1:allClass.__len__() - 1])
+
     ynExp = input("是否添加实验课,默认为N(Y/N):").strip()
     advTime = input("请输入提前提醒的时间,默认为15分钟:(单位分钟):").strip()
     if advTime != '':
