@@ -26,7 +26,7 @@ def main(epub_file):
         zip_ref.extractall(temp_path)
     for root, dirs, files in os.walk(temp_path, topdown=False):
         for file in files:
-            if file.endswith(".html") or file.endswith(".opf"):
+            if file.endswith("html") or file.endswith("opf"):
                 file_abs_path = os.path.abspath(os.path.join(root, file))
                 translate(file_abs_path)
 
