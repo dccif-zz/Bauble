@@ -242,7 +242,7 @@ if __name__ == "__main__":
     allClass = readLessonTable(infile)
     Lesson.email = input("请输入要同步的邮箱账号:")
 
-    allLesson = LessObjList(allClass[1:allClass.__len__() - 1])
+    allLesson = LessObjList(allClass[1:allClass.__len__()])
 
     ynExp = input("是否添加实验课,默认为N(Y/N):").strip()
     advTime = input("请输入提前提醒的时间,默认为15分钟:(单位分钟):").strip()
