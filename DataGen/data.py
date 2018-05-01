@@ -44,7 +44,7 @@ class rowData:
         '''
         self.dataid = idbegin + 1
         self.created_time = self._creatTime()
-        self.birth = self._genbirth(1970, 1, 1)
+        self.birth = self._genbirth()
         self.grade = self._randGrade()
         self.introduction = '0'
         self.name = nameGen.gen_full_name()
@@ -88,7 +88,7 @@ class rowData:
         return "".join(random.sample(self.create_timeList, 1)) + " " + self._randTime()
 
     # 生成老师生日 因为是老师 默认设置大于18岁
-    def _genbirth(self, year, month, day):
+    def _genbirth(self):
         return "".join(random.sample(self.birth_list, 1))
 
     '''
