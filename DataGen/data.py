@@ -2,8 +2,17 @@ import hashlib
 import random
 import string
 from datetime import datetime, time, timedelta
+
 import pandas as pd
+
 import nameGen
+
+
+# 生成随机日期
+def datelist(beginDate, endDate):
+    # beginDate, endDate是形如‘20160601’的字符串或datetime格式
+    date_l = [datetime.strftime(x, '%Y/%m/%d') for x in list(pd.date_range(start=beginDate, end=endDate))]
+    return date_l
 
 
 class rowData:
@@ -19,6 +28,13 @@ class rowData:
     # 用户ID
     dataid = 0
 
+    # 账户创建日期列表
+    create_timeList = datelist(datetime(2018, 4, 1), datetime.now())
+
+    # 老师生日日期列表 大于18岁
+    age_end_now = datetime.now() - timedelta(days=365 * 18)
+    birth_list = datelist(datetime(1970, 1, 1), age_end_now)
+
     # 初始化
     def __init__(self, idbegin):
         '''
@@ -27,7 +43,7 @@ class rowData:
         :param idbegin: 开启的id，之后的id以1的间隔序列递增
         '''
         self.dataid = idbegin + 1
-        self.created_time = self._creatTime(2018, 4, 1)
+        self.created_time = self._creatTime()
         self.birth = self._genbirth(1970, 1, 1)
         self.grade = self._randGrade()
         self.introduction = '0'
@@ -60,12 +76,6 @@ class rowData:
 
         return random.choice(pre_lst) + ''.join(random.sample("0123456789", 8))
 
-    # 生成随机日期
-    def _datelist(self, beginDate, endDate):
-        # beginDate, endDate是形如‘20160601’的字符串或datetime格式
-        date_l = [datetime.strftime(x, '%Y/%m/%d') for x in list(pd.date_range(start=beginDate, end=endDate))]
-        return date_l
-
     # 生成随机时间 12小时制
     def _randTime(self):
         hours = random.choice(range(0, 24))
@@ -74,14 +84,12 @@ class rowData:
         return time(hours, minutes, seconds).strftime("%I:%M:%S %p")
 
     # 生成 创建时间
-    def _creatTime(self, year, month, day):
-        return "".join(
-            random.sample(self._datelist(datetime(year, month, day), datetime.now()), 1)) + " " + self._randTime()
+    def _creatTime(self):
+        return "".join(random.sample(self.create_timeList, 1)) + " " + self._randTime()
 
     # 生成老师生日 因为是老师 默认设置大于18岁
     def _genbirth(self, year, month, day):
-        end = datetime.now() - timedelta(days=365 * 18)
-        return "".join(random.sample(self._datelist(datetime(year, month, day), end), 1))
+        return "".join(random.sample(self.birth_list, 1))
 
     '''
     生成随机密码，默认长度16位，并通过SHA256
